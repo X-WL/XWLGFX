@@ -5,6 +5,7 @@
 */
 #define FASTLED_ALLOW_INTERRUPTS 0
 #include "FastLED.h"
+#include "XWLGFX.h"
 
 #define NUM_OUT 16
 #define NUM_LED_PER_OUT 118
@@ -36,6 +37,7 @@
 XWLGFX gfx;
 
 CRGB out_leds [MAX_LED_OUT];
+uint8_t params[20];
 
 void setup() {
   Serial.begin(115200);
@@ -66,13 +68,12 @@ void setup() {
      3. scale width. default 2
      4. scale height. default 2
   */
-  gfx.begin(NUM_OUT, NUM_LED_PER_OUT);
+  //gfx.begin(NUM_OUT, NUM_LED_PER_OUT);
   //Custom
-  //gfx.begin(NUM_OUT, NUM_LED_PER_OUT, 10, 1);
+  gfx.begin(NUM_OUT, NUM_LED_PER_OUT, 10, 1);
   /*
    * Options for GFX. Let the library know what you want :)
    */
-  static uint8_t params[20];
   params[0] = 100; //Manual mode. At the moment, only he.
   params[1] = 255; //Global Brightness 
   /*
@@ -86,7 +87,7 @@ void setup() {
    * 65 - lines               
    * 75 - circles
    */
-  params[2] = 15;  //scene 1: Fire
+  params[2] = 75;  //scene 
   params[3] = 255; //Scene Brightness
   params[4] = 5;    //Scene Preset (Implemented for "Fire")
   params[5] = 255;  //Color red       Coming soon...
@@ -101,10 +102,10 @@ void setup() {
 }
 
 void loop() {
-  EVERY_N_MILLISECONDS(settings->getRefreshDelay()) {
+  EVERY_N_MILLISECONDS(1000/30) {
     FastLED.show();
-    lastHandle = millis();
-    gfx.handle(settings->control);
+    static uint8_t lastHandle = millis();
+    gfx.handle(params);
     Serial.print("HandleTime: ");
     Serial.print(millis() - lastHandle);
     Serial.println("us");
