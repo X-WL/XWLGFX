@@ -22,7 +22,8 @@ class Scene {
     
     void static lines(CRGB *pix, uint16_t width, uint16_t height, accum88 speed, uint8_t numLines, uint16_t sizeLine, uint16_t angle, uint8_t feather, CRGB color);
     void static circles(CRGB *pix, uint16_t width, uint16_t height, accum88 speed, uint8_t numLines, uint16_t sizeLine, uint16_t angle, uint8_t feather, CRGB color);
-    void static testLines(CRGB *pix, uint16_t width, uint16_t height);
+    
+    void static sinusWave(CRGB *pix, uint16_t width, uint16_t height, accum88 speed, uint16_t widthWave, uint16_t heightWave, uint16_t sizeLine, uint8_t feather, CRGB color);
     
     void static fillRGB(CRGB *pix, uint32_t num, uint8_t r, uint8_t g, uint8_t b);
     void static fillHSV(CRGB *pix, uint32_t num, uint8_t h, uint8_t s, uint8_t v);

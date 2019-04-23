@@ -21,6 +21,8 @@
 
 #include "Scene.h"
 #include "FX.h"
+#include "Fixture.h"
+#include "Merge.h"
 //#include "Draw.h"
 
 #define LEN_QUEUE 10
@@ -31,7 +33,6 @@ class XWLGFX {
     int height;
     uint16_t outWidth;
     uint16_t outHeight;
-    //int xScaleW = 10;
     int xScaleW = 2;
     int xScaleH = 2;
     int renderWidth;
@@ -41,13 +42,6 @@ class XWLGFX {
 
     CRGB *mainBuffer;
     CRGB *buffer;
-    //CRGB *fxPix;
-    //Buffer size?
-    //CRGB mainBuffer[MAX_PIXEL];
-    //CRGB scenePix1[MAX_PIXEL];
-    //CRGB fxPix1[MAX_PIXEL];
-    
-    uint8_t queue[LEN_QUEUE][8]; //10 que and 5 params
   public:
   
     void begin(uint16_t w, uint16_t h);
@@ -57,6 +51,7 @@ class XWLGFX {
     
     void getData(CRGB *out);//TODO
     void getData(CRGB *out, uint16_t startPix);//From LED PAR TODO: Add Mapping customs
+    void getData(CRGB *outBuff, Fixture *fixture, uint8_t numFixture);
 
     CRGB* sceneRender(uint16_t width, uint16_t height, uint8_t idScn, accum88 speedBPM, uint8_t preset);
     void FXRender(CRGB *buf, uint16_t width, uint16_t height, uint8_t idFX, accum88 speedBPM, uint8_t briFX);
@@ -78,6 +73,8 @@ class XWLGFX {
     accum88 bit16to88(uint8_t b1, uint8_t b2);
     
     CRGBPalette16 getPalette(uint8_t idPalette);
+    
+    //uint8_t addFixture();
     
     void print(CRGB *pixels, uint16_t w, uint16_t h);
     void performanceTest(CRGB *out, uint16_t width, uint16_t height);

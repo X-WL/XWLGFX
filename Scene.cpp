@@ -151,28 +151,35 @@ void Scene::circles(CRGB *pix, uint16_t width, uint16_t height, accum88 speed, u
             minSide = width;
         }
         int r = map(beat88(speed), 0, 65535 , 0, maxSide * 0.7);
-        Draw::drawCircle(pix, width, height, width/2 - 1, height/2 - 1, r-1, color);
-        Draw::drawCircle(pix, width, height, width/2 - 1, height/2 - 1, r, color);
-        Draw::drawCircle(pix, width, height, width/2 - 1, height/2 - 1, r+1, color);
+        Draw::drawCircle(pix, width, height, width / 2 - 1, height / 2 - 1, r - 1, color);
+        Draw::drawCircle(pix, width, height, width / 2 - 1, height / 2 - 1, r, color);
+        Draw::drawCircle(pix, width, height, width / 2 - 1, height / 2 - 1, r + 1, color);
     }
 }
 
-void Scene::testLines(CRGB *pix, uint16_t width, uint16_t height){
-    fillRGB(pix, 24 * 20, 1, 1, 1);
-    Draw::drawLine(pix, width, height, 0, 0, width, height, CRGB::White);
+void Scene::sinusWave(CRGB *pix, uint16_t width, uint16_t height, accum88 speed, uint16_t widthWave, uint16_t heightWave, uint16_t sizeLine, uint8_t feather, CRGB color){
+    heightWave = 40;
+    // TODO NEW !!!
+    uint16_t dx = 65535 / widthWave;
+    uint16_t beat = beatsin88(speed);
+    uint16_t yn2 = heightWave * 0.5;
+    uint16_t yh2 = height * 0.5;
+    for (int i = 0; i < width; i ++) {
+        uint32_t px = beatsin88(speed) + dx * i;
+        if (px > 65535) {
+            px -= 65535;
+        }
+        uint16_t ystart = map(px, 0, 65535, 0, yn2);
+//        Serial.print(" start-");
+//        Serial.print(ystart);
+        //uint16_t ystart = 10;
+        for (int y = (yh2 - 1) - ystart; y < (yh2 - 1) + ystart; y++) {
+            Draw::write_s(pix, width, height, i, y, color);
+        }
+    }
+    //fillRGB(pix, 24 * 20, 1, 1, 1);
+    //Draw::drawLine(pix, width, height, 0, 0, width, height, CRGB::White);
     
-    //    //Draw::drawLine(pix, width, height, 0, 0, 159, 118, CRGB::White);
-    //    uint16_t hue = beatsin8(6);
-    //    Serial.print("hue-");
-    //    Serial.print(hue);
-    //    //fillHSV(pix, width * height, hue, 255, 255);
-    //    uint16_t move = beatsin16(10, 0, height);
-    //    Serial.print(" move-");
-    //    Serial.println(move);
-    //
-    //    Draw::drawLine(pix, width, height, move, 0, width - move, 117, CHSV(hue, 255, 255));
-    ////    Serial.print("draw");
-    //    //Serial.print(move);
 }
 
 void Scene::fillRGB(CRGB *pix, uint32_t num, uint8_t r, uint8_t g, uint8_t b) {

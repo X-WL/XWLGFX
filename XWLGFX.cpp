@@ -66,6 +66,15 @@ void XWLGFX::getData(CRGB *out){
     //Serial.print("get");
 }
 
+void XWLGFX::getData(CRGB *outBuff, Fixture *fixture, uint8_t numFixture){
+//    print(mainBuffer, renderWidth, renderHeight);
+    for (int i = 0; i < numFixture; i++) {
+        //fixture[i].layer[0].print();
+        Merge::mergeWithFixture(outBuff, outWidth, outHeight, mainBuffer, renderWidth, renderHeight, fixture[i]);
+    }
+//    print(outBuff, outWidth, outHeight);
+}
+
 void XWLGFX::getData(CRGB *out, uint16_t startPix){//From LED PAR TODO: Add Mapping customs
     //1
     print(mainBuffer, renderWidth, renderHeight);
@@ -124,6 +133,9 @@ CRGB* XWLGFX::sceneRender(uint16_t width, uint16_t height, uint8_t idScn, accum8
             case 7: {
                 Scene::circles(buffer, width, height, speedBPM, 2, 1, 45, 0, CRGB::Yellow);
             } break;
+            case 8: {
+                Scene::sinusWave(buffer, width, height, speedBPM, 50, 50, 1, 0, CRGB::Green);
+            } break;
             default: {
             } break;
         }
@@ -160,12 +172,8 @@ void XWLGFX::FXRender(CRGB *buf, uint16_t width, uint16_t height, uint8_t idFX, 
             mergeSUB(buf, buffer, width * height, briFX);
         } break;
         case 7: {
-            //Serial.print("strob");
-            //Serial.print(squarewave8(cFX));
             Scene::fillHSV(buffer, width * height,
                            0, 0, squarewave8(cFX));
-            //        fillRGB(fxPix1, MAX_LED_OUT,
-            //        squarewave8(cFX), squarewave8(cFX), squarewave8(cFX));
             mergeSUB(buf, buffer, width * height, briFX);
         }
         default: break;
@@ -174,15 +182,6 @@ void XWLGFX::FXRender(CRGB *buf, uint16_t width, uint16_t height, uint8_t idFX, 
 
 void XWLGFX::mergeSUB(CRGB *a, CRGB *b, uint32_t num, uint8_t v) {
     for (int i = 0; i < num; i++) {
-//        //TODO: Replace sub to HSV
-//        uint8_t pixR = floor((b[i].r * v )/ 255);
-//        uint8_t pixG = floor((b[i].g * v )/ 255);
-//        uint8_t pixB = floor((b[i].b * v )/ 255);
-//        CRGB mergePix = CRGB(pixR, pixG, pixB); //b[i]*b/255;
-//        //CHSV hsv = b[i];
-//        //CRGB mergePix = CHSV(hsv.h , hsv.s, hsv.h);
-//        a[i] -= mergePix;
-        
         a[i].r -= scale8_video(b[i].r, v);
         a[i].g -= scale8_video(b[i].g, v);
         a[i].b -= scale8_video(b[i].b, v);
@@ -191,26 +190,6 @@ void XWLGFX::mergeSUB(CRGB *a, CRGB *b, uint32_t num, uint8_t v) {
 
 void XWLGFX::mergeADD(CRGB *a, CRGB *b, uint32_t num, uint8_t v) {
     for (int i = 0; i < num; i++) {
-        //TODO: Replace with using RAW
-//        uint8_t pixR = floor((b[i].r * v )/ 255);
-//        if (pixR + a[i].r < 256) {
-//            a[i].r += pixR;
-//        } else {
-//            a[i].r = 255;
-//        }
-//        uint8_t pixG = floor((b[i].g * v )/ 255);
-//        if (pixG + a[i].g < 256) {
-//            a[i].g += pixG;
-//        } else {
-//            a[i].g = 255;
-//        }
-//        uint8_t pixB = floor((b[i].b * v )/ 255);
-//        if (pixB + a[i].b < 256) {
-//            a[i].b += pixB;
-//        } else {
-//            a[i].b = 255;
-//        }
-        
             a[i].r += scale8_video(b[i].r, v);
             a[i].g += scale8_video(b[i].g, v);
             a[i].b += scale8_video(b[i].b, v);
@@ -219,10 +198,6 @@ void XWLGFX::mergeADD(CRGB *a, CRGB *b, uint32_t num, uint8_t v) {
 
 void XWLGFX::mergeADD50(CRGB *a, CRGB *b, uint32_t num) {
     for (int i = 0; i < num; i++) {
-//        a[i] = CRGB(floor((a[i].r + b[i].r) / 2),
-//                    floor((a[i].g + b[i].g) / 2),
-//                    floor((a[i].b + b[i].b) / 2));
-        
         a[i].r = scale8_video(a[i].r, 127) + scale8_video(b[i].r, 127);
         a[i].g = scale8_video(a[i].r, 127) + scale8_video(b[i].g, 127);
         a[i].b = scale8_video(a[i].r, 127) + scale8_video(b[i].b, 127);
@@ -238,10 +213,6 @@ void XWLGFX::mergeHTP(CRGB *a, CRGB *b, uint32_t num) {
 
 void XWLGFX::mergePTP(CRGB *a, CRGB *b, uint32_t num) {
     for (int i = 0; i < num; i++) {
-//        a[i] = CRGB(floor((a[i].r * b[i].r) / 255),
-//                    floor((a[i].g * b[i].g) / 255),
-//                    floor((a[i].b * b[i].b) / 255));
-        
         a[i].r = scale8_video(a[i].r, b[i].r);
         a[i].g = scale8_video(a[i].g, b[i].g);
         a[i].b = scale8_video(a[i].b, b[i].b);
@@ -362,7 +333,6 @@ float XWLGFX::BPMtoSpeed88(accum88 bpm) {
 accum88 XWLGFX::bit16to88(uint8_t b1, uint8_t b2) {
     //Calc Q8.8 fixed-point value
     accum88 s88 = (b1 + b2 * 0.00390625) * 256;
-    Serial.println(s88);
     return s88;
 }
 
