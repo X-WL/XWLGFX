@@ -188,7 +188,7 @@ struct Fixture {
             //VERTICAL STRIP
             MappingLayer *tlayer = new MappingLayer[outDX];
             for (int i = 0; i < outDX; i++){
-                layer[i] = mlayer->getNewLayer(mlayer->inputX1 + i * scaleX, mlayer->inputY1,
+                tlayer[i] = mlayer->getNewLayer(mlayer->inputX1 + i * scaleX, mlayer->inputY1,
                                         mlayer->inputX1 + ((i + 1) * scaleX - 1), mlayer->inputY2,
                                         mlayer->outX1 + i, mlayer->outY1,
                                         mlayer->outX1 + i, mlayer->outY2);
